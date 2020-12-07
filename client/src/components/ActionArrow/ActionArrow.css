@@ -1,0 +1,24 @@
+.arrow-content {
+  height: 300px;
+}
+.arrow-content-box {
+  position: absolute;
+
+  right: 7rem;
+}
+.draw-arrow {
+  margin-left: 20px;
+  height: 6em;
+  width: 6em;
+}
+.icon-arrow {
+  position: absolute;
+  right: -15px;
+  bottom: -15px;
+  height: 3.5em;
+  width: 3.5em;
+}
+.arrow-text {
+  font-family: var(--ubuntu);
+  color: white;
+}
