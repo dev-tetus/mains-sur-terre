@@ -33,19 +33,22 @@ function Boutique() {
     <div className="content-container">
       {products.map((product) => {
         return (
-          <div className="card-element">
+          <div key={product.id} className="card-element">
             <div className="image-container">
               <img src={product.urls.full} alt="" />
             </div>
-            <h3>name</h3>
-            <div className="quantity-container">
-              <button className="btn" onClick={subValue}>
-                -
-              </button>
-              <p>{value}</p>
-              <button className="btn" onClick={addValue}>
-                +
-              </button>
+            <div className="details">
+              <h3>name</h3>
+              <div className="quantity-container">
+                <button className="btn" onClick={subValue}>
+                  -
+                </button>
+                <p>{value}</p>
+                <button className="btn" onClick={addValue}>
+                  +
+                </button>
+                <button className="btn-cart">Add to cart</button>
+              </div>
             </div>
           </div>
         );
