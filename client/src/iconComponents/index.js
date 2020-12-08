@@ -1,6 +1,0 @@
-export { default as ArrowIcon } from './ArrowIcon'
-export { default as DelimiterArrow } from './DelimiterArrow'
-export { default as DrawArrow } from './DrawArrow'
-export { default as FirstCircles } from './FirstCircles'
-export { default as SecondCircles } from './SecondCircles'
-export { default as ThirdCircles } from './ThirdCircles'
