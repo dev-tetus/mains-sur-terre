@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./Boutique.css";
-import { createApi } from "unsplash-js";
-const nodeFetch = require("node-fetch");
+import { IoBagAddSharp } from "react-icons/all";
 require("dotenv/config");
 
 function Boutique() {
@@ -39,16 +38,10 @@ function Boutique() {
             </div>
             <div className="details">
               <h3>name</h3>
-              <div className="quantity-container">
-                <button className="btn" onClick={subValue}>
-                  -
-                </button>
-                <p>{value}</p>
-                <button className="btn" onClick={addValue}>
-                  +
-                </button>
-                <button className="btn-cart">Add to cart</button>
-              </div>
+
+              <button className="btn-cart">
+                <IoBagAddSharp className="IoBagAddSharp" />
+              </button>
             </div>
           </div>
         );
