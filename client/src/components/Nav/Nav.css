@@ -1,3 +1,66 @@
-.vector {
-  color: black;
+.nav-container {
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 2rem;
+  width: 80%;
+  height: 100vh;
+  background-color: black;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.menu {
+  cursor: pointer;
+}
+.icon {
+  cursor: pointer;
+  font-size: 26px;
+  color: white;
+}
+.cart {
+  cursor: pointer;
+  color: white;
+  font-size: 35px;
+}
+.links {
+  opacity: 0;
+  width: 50%;
+
+  display: flex;
+  justify-content: space-evenly;
+}
+.link:link,
+.link:hover,
+.link:visited {
+  text-decoration: none;
+  color: white;
+}
+.link-container {
+  position: relative;
+}
+.link-container::after {
+  color: white;
+  font-size: 13px;
+
+  position: absolute;
+  left: -0.5rem;
+  bottom: -30px;
+}
+.link-container:nth-child(1)::after {
+  content: "contact";
+}
+.link-container:nth-child(3)::after {
+  content: "shop";
+}
+.link-container:nth-child(5)::after {
+  content: "inspiration";
+}
+
+.line {
+  margin-left: auto;
+  margin-right: auto;
+  width: 4em;
+  height: 1px;
+  background-color: white;
+  align-self: center;
 }
