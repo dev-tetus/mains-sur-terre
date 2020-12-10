@@ -43,7 +43,7 @@ function Nav() {
           pointerEvents: "auto",
           opacity: 1,
         },
-        "-=1s"
+        "-=0.2s"
       );
     }
 
