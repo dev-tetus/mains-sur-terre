@@ -7,25 +7,44 @@ import { GiInspiration } from "react-icons/gi";
 import gsap from "gsap";
 
 import Vase from "../../iconComponents/Vase.js";
+import Circle from "../../iconComponents/Circle.js";
 
 function Nav() {
+  const tl = gsap.timeline({
+    defaults: {
+      duration: 1,
+    },
+  });
+
   const [open, setOpen] = useState(false);
   function handleClick() {
-    const tl = gsap.timeline({
-      defaults: {
-        duration: 1,
-      },
-    });
     if (open) {
       setOpen(false);
-      tl.to(".links", {
-        opacity: 0,
-      });
+      tl.to(".menu", {
+        rotateZ: 0,
+        duration: 0.5,
+      }).to(
+        ".links",
+        {
+          pointerEvents: "none",
+          opacity: 0,
+        },
+        "-=1s"
+      );
     } else {
       setOpen(true);
-      tl.to(".links", {
-        opacity: 1,
-      });
+
+      tl.to(".menu", {
+        rotateZ: 90,
+        duration: 0.5,
+      }).to(
+        ".links",
+        {
+          pointerEvents: "auto",
+          opacity: 1,
+        },
+        "-=1s"
+      );
     }
 
     console.log("hello world");
@@ -37,23 +56,31 @@ function Nav() {
         <Vase onClick={handleClick} className="menu" />
       </div>
       <div className="links">
-        <div className="link-container">
-          <Link className="link" to="/contact">
-            <RiContactsBookLine className="icon" />
-          </Link>
+        <div className="icons">
+          <div className="link-container">
+            <Link className="link" to="/contact">
+              <RiContactsBookLine className="icon" />
+            </Link>
+          </div>
+
+          <div className="line"></div>
+          <div className="link-container">
+            <Link className="link" to="/boutique">
+              <RiShoppingBag2Line className="icon" />
+            </Link>
+          </div>
+          <div className="line"></div>
+          <div className="link-container">
+            <Link className="link" to="/inspiration">
+              <GiInspiration className="icon" />
+            </Link>
+          </div>
         </div>
 
-        <div className="line"></div>
-        <div className="link-container">
-          <Link className="link" to="/boutique">
-            <RiShoppingBag2Line className="icon" />
-          </Link>
-        </div>
-        <div className="line"></div>
-        <div className="link-container">
-          <Link className="link" to="/inspiration">
-            <GiInspiration className="icon" />
-          </Link>
+        <div className="words">
+          <p>Contact</p>
+          <p>Shop</p>
+          <p>Inspiration</p>
         </div>
       </div>
       <BiCartAlt className="cart" />
