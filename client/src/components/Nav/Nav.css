@@ -1,15 +1,19 @@
 .nav-container {
-  margin-left: auto;
-  margin-right: auto;
+  border: 1px solid red;
+  left: 0;
+  position: fixed;
+  width: 100%;
   margin-top: 2rem;
-  width: 80%;
-  height: 100vh;
+  height: 5rem;
   background-color: black;
   display: flex;
-  justify-content: space-between;
+  justify-content: space-around;
   align-items: center;
 }
+.icon-menu {
+}
 .menu {
+  transform: scale(1.5);
   cursor: pointer;
 }
 .icon {
@@ -22,11 +26,30 @@
   color: white;
   font-size: 35px;
 }
-.links {
-  opacity: 0;
-  width: 50%;
+.icons {
+  /* align-items: center; */
 
   display: flex;
+}
+.words {
+  color: white;
+  padding: 10;
+  left: 50%;
+  top: 200%;
+  transform: translate(-50%, -50%);
+
+  width: 120%;
+  position: absolute;
+  display: flex;
+  justify-content: space-between;
+}
+.links {
+  position: relative;
+  opacity: 0;
+  width: 40%;
+
+  display: flex;
+  flex-direction: column;
   justify-content: space-evenly;
 }
 .link:link,
@@ -38,29 +61,15 @@
 .link-container {
   position: relative;
 }
-.link-container::after {
-  color: white;
-  font-size: 13px;
-
-  position: absolute;
-  left: -0.5rem;
-  bottom: -30px;
-}
-.link-container:nth-child(1)::after {
-  content: "contact";
-}
-.link-container:nth-child(3)::after {
-  content: "shop";
-}
-.link-container:nth-child(5)::after {
-  content: "inspiration";
-}
 
 .line {
   margin-left: auto;
   margin-right: auto;
-  width: 4em;
+  width: 1em;
   height: 1px;
   background-color: white;
   align-self: center;
+}
+.circle {
+  color: white;
 }
