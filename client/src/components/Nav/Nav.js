@@ -10,6 +10,23 @@ import Vase from "../../iconComponents/Vase.js";
 
 function Nav() {
   const [open, setOpen] = useState(false);
+
+  // window.addEventListener('click', () => {
+  //   const tl = gsap.timeline({
+  //     defaults: {
+  //       duration: 1,
+  //     },
+  //   });
+  //   if (open) {
+  //     setOpen(false);
+  //     tl.to(".links", {
+  //       opacity: 0,
+  //     });
+  //   }
+
+  // })
+
+
   function handleClick() {
     const tl = gsap.timeline({
       defaults: {
