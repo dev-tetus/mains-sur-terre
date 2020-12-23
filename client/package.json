@@ -2,7 +2,7 @@
   "name": "mains-sur-terre",
   "version": "0.1.0",
   "private": true,
-  "proxy": "http://127.0.0.1:3001",
+  "proxy": "https://mstapi.herokuapp.com",
   "dependencies": {
     "@material-ui/core": "^4.11.1",
     "@material-ui/system": "^4.9.14",
