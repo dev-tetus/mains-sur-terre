@@ -2,7 +2,7 @@ const express = require("express");
 const app = express();
 const cors = require("cors");
 const mysql = require("mysql");
-require("dotenv/config");
+require("dotenv").config();
 
 app.use(cors());
 
@@ -22,12 +22,12 @@ app.listen(process.env.PORT, () => {
   console.log(`listening on ${process.env.PORT}`);
 });
 
-connection.connect((err) => {
-  if (err) throw err;
-  console.log("Connected!");
-});
+// connection.connect((err) => {
+//   if (err) throw err;
+//   console.log("Connected!");
+// });
 
-app.get("/", (req, res) => {
+app.get("/api", (req, res) => {
   res.send("Hello world");
 });
 
