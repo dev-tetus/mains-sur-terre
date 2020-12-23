@@ -24,10 +24,10 @@ app.listen(PORT, () => {
   console.log(`listening on ${PORT}`);
 });
 
-// connection.connect((err) => {
-//   if (err) throw err;
-//   console.log("Connected!");
-// });
+connection.connect((err) => {
+  if (err) throw err;
+  console.log("Connected!");
+});
 
 app.get("/api", (req, res) => {
   res.send("Hello world");
