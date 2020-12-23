@@ -1,32 +1,16 @@
 const express = require("express");
+
 const app = express();
 const cors = require("cors");
-const mysql = require("mysql");
+const db = require("./config");
 require("dotenv").config();
 
 const port = process.env.PORT || 3001;
 
 app.use(cors());
 
-const db = mysql.createPool({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
-});
-const connection = mysql.createConnection({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
-});
 app.listen(port, () => {
   console.log(`listening on ${port}`);
-});
-
-connection.connect((err) => {
-  if (err) throw err;
-  console.log("Connected!");
 });
 
 app.get("/api", (req, res) => {
