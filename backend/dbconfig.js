@@ -1,5 +1,5 @@
 const mysqlx = require("@mysql/xdevapi");
-const dotenv = require("dotenv");
+
 const keys = require("./config/prod");
 
 const config = {
@@ -9,11 +9,8 @@ const config = {
   database: keys.DB_NAME,
 };
 
-const client = mysqlx.getClient(config, {
-  pooling: { enabled: true, maxSize: 10 },
-});
-client.getSession().then((session) => {
-  console.log(session.inspect());
+const client = mysqlx.getSession(config).then((session) => {
+  console.log(session.inspect()); // { user: 'root', host: 'localhost', port: 33060 }
 });
 
-module.exports = { db };
+module.exports = { client };
