@@ -4,6 +4,8 @@ const cors = require("cors");
 const mysql = require("mysql");
 require("dotenv").config();
 
+const PORT = process.env.PORT || 3001;
+
 app.use(cors());
 
 const db = mysql.createPool({
@@ -18,8 +20,8 @@ const connection = mysql.createConnection({
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
 });
-app.listen(process.env.PORT, () => {
-  console.log(`listening on ${process.env.PORT}`);
+app.listen(PORT, () => {
+  console.log(`listening on ${PORT}`);
 });
 
 // connection.connect((err) => {
