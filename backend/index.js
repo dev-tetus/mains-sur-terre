@@ -8,9 +8,10 @@ require("dotenv").config();
 const pool = require("./dbconfig");
 
 const products = require("./routes/products");
-console.log(process.env.NODE_ENV);
+const auth = require("./routes/auth");
 
 app.use("/products", products);
+app.use("/auth", auth);
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
