@@ -8,6 +8,7 @@ const Verifier = require("email-verifier");
 
 const keys = require("../config/keys");
 const authSchema = require("../Helpers/auth_schema");
+const { validateUser } = require("../middlewares/validationMiddleware");
 
 const verifier = new Verifier(keys.API_KEY_VERIFIER);
 
@@ -25,49 +26,42 @@ router.get("/", async (req, res) => {
 });
 
 //*Register user
-router.post("/register", async (req, res) => {
+router.post("/register", validateUser, async (req, res) => {
   try {
-    const validData = await authSchema.registerSchema.validateAsync(req.body);
-    const hashedPassword = await bcrypt.hash(validData["password"], 10);
-    verifier.verify(validData["email"], async (err, data) => {
+    const hashedPassword = await bcrypt.hash(
+      res.locals.validData["password"],
+      10
+    );
+    pool.getConnection((err, connection) => {
       if (err) throw err;
-      if (data.dnsCheck === "true") {
-        console.log("valid");
-        pool.getConnection((err, connection) => {
-          if (err) throw err;
-          connection.query(
-            "SELECT * FROM users WHERE username = ? || email = ?",
-            [validData["username"], validData["email"]],
-            (err, results) => {
-              if (Object.keys(results).length === 0) {
-                connection.query(
-                  "INSERT INTO users(email, username, password) VALUES(?,?,?)",
-                  [validData["email"], validData["username"], hashedPassword],
-                  (err, results) => {
-                    if (err) throw err;
-                    res.send(`User ${validData["username"]} created`);
-                    connection.destroy();
-                  }
-                );
-              } else {
-                if (results[0].email === validData["email"]) {
-                  res.send("User already registered");
-                  connection.destroy();
-                } else {
-                  res.send("Username already taken");
-                  connection.destroy();
-                }
+      connection.query(
+        "SELECT * FROM users WHERE username = ? || email = ?",
+        [validData["username"], validData["email"]],
+        (err, results) => {
+          if (Object.keys(results).length === 0) {
+            connection.query(
+              "INSERT INTO users(email, username, password) VALUES(?,?,?)",
+              [validData["email"], validData["username"], hashedPassword],
+              (err, results) => {
+                if (err) throw err;
+                res.send(`User ${validData["username"]} created`);
+                connection.destroy();
               }
+            );
+          } else {
+            if (results[0].email === validData["email"]) {
+              res.send("User already registered");
+              connection.destroy();
+            } else {
+              res.send("Username already taken");
+              connection.destroy();
             }
-          );
-        });
-      } else {
-        console.log("not valid");
-        res.send("not valid email");
-      }
+          }
+        }
+      );
     });
   } catch (e) {
-    if (e.isJoi === true) res.sendStatus(422);
+    if (e) throw e;
   }
 });
 
