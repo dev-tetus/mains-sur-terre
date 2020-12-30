@@ -4,6 +4,7 @@ const bodyParser = require("body-parser");
 const pool = require("../dbconfig");
 const Joi = require("joi");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 const Verifier = require("email-verifier");
 
 const keys = require("../config/keys");
@@ -28,28 +29,26 @@ router.get("/", async (req, res) => {
 //*Register user
 router.post("/register", validateUser, async (req, res) => {
   try {
-    const hashedPassword = await bcrypt.hash(
-      res.locals.validData["password"],
-      10
-    );
+    const hashedPassword = await bcrypt.hash(res.locals.password, 10);
     pool.getConnection((err, connection) => {
       if (err) throw err;
       connection.query(
         "SELECT * FROM users WHERE username = ? || email = ?",
-        [validData["username"], validData["email"]],
+        [res.locals.username, res.locals.email],
         (err, results) => {
+          console.log(results);
           if (Object.keys(results).length === 0) {
             connection.query(
               "INSERT INTO users(email, username, password) VALUES(?,?,?)",
-              [validData["email"], validData["username"], hashedPassword],
+              [res.locals.email, res.locals.username, hashedPassword],
               (err, results) => {
                 if (err) throw err;
-                res.send(`User ${validData["username"]} created`);
+                res.send(`User ${res.locals.username} created`);
                 connection.destroy();
               }
             );
           } else {
-            if (results[0].email === validData["email"]) {
+            if (results[0].email === res.locals.email) {
               res.send("User already registered");
               connection.destroy();
             } else {
@@ -76,7 +75,7 @@ router.get("/login", async (req, res) => {
       if (err) throw err;
       connection.query(
         "SELECT * FROM users WHERE username = ? OR email = ?",
-        [validData["user"], validData["user"]],
+        [validData["username"], validData["username"]],
         (err, results) => {
           if (err) throw err;
           if (results.length > 0) {
