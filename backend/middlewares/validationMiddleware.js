@@ -13,8 +13,9 @@ const validateUser = async (req, res, next) => {
     verifier.verify(validData["email"], async (err, data) => {
       if (err) throw err;
       if (data.dnsCheck === "true") {
-        res.locals.validData;
-        next();
+        res.locals.email = validData["email"];
+        res.locals.username = validData["username"];
+        res.locals.password = validData["password"];
       } else {
         res.send("Not valid email");
       }
