@@ -5,15 +5,20 @@ const app = express();
 const cors = require("cors");
 const bodyParser = require("body-parser");
 
+//Config modules
+const pool = require("./config/Db/DBConfig");
+const redisModule = require("./config/Redis/redis");
+const keys = require("./config/Keys/keys");
+
 //Session modules
 const redis = require("redis");
 const session = require("express-session");
 let RedisStore = require("connect-redis")(session);
-let redisClient = redis.createClient();
-
-//Config modules
-const pool = require("./config/Db/DBConfig");
-const redisModule = require("./config/Redis/redis");
+let redisClient = redis.createClient({
+  port: keys.REDIS.PORT,
+  host: keys.REDIS.HOST,
+  password: keys.REDIS.PASSWORD,
+});
 
 //Routes
 const products = require("./routes/products");
@@ -22,7 +27,7 @@ const auth = require("./routes/auth");
 //Middlewares
 app.use(
   session({
-    store: new RedisStore({ client: redisModule.redisClient }),
+    store: new RedisStore({ client: redisClient }),
     secret: "testSecret",
     saveUninitialized: false,
     resave: false,
