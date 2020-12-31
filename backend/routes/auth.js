@@ -8,7 +8,7 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const Verifier = require("email-verifier");
 
-const keys = require("../config/keys");
+const keys = require("../config/Keys/keys");
 const authSchema = require("../Helpers/auth_schema");
 const {
   validateUser,
@@ -17,7 +17,7 @@ const {
   refreshTokenRequest,
 } = require("../middlewares/validationMiddleware");
 
-const verifier = new Verifier(keys.API_KEY_VERIFIER);
+const verifier = new Verifier(keys.MAIL_VERIFIER.API_KEY);
 
 router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({ extended: false }));
@@ -97,10 +97,7 @@ router.post("/login", async (req, res) => {
                   };
 
                   const accessToken = grantAccess(user);
-                  const refreshToken = jwt.sign(
-                    user,
-                    process.env.SECRET_REFRESH_KEY
-                  );
+                  const refreshToken = jwt.sign(user, keys.JWT.REFRESH_KEY);
                   const userInfo = {
                     accessToken: accessToken,
                     refreshToken: refreshToken,
@@ -129,7 +126,7 @@ router.post("/login", async (req, res) => {
 //TODO Check Redis
 //Check only if token is valid and responds user data if correct
 router.get("/token", refreshTokenRequest, (req, res) => {
-  jwt.verify(req.token, process.env.SECRET_REFRESH_KEY, (err, data) => {
+  jwt.verify(req.token, keys.JWT.ACCESS_KEY, (err, data) => {
     if (err) return res.sendStatus(403);
     const accessToken = grantAccess(data);
     res.send(accessToken);
