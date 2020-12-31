@@ -71,7 +71,7 @@ const authenticateUser = (req, res, next) => {
 function validateRole(role) {
   return (req, res, next) => {
     if (req.session.role !== role)
-      return res.send("You have no access!!").status(403);
+      return res.status(403).send("You have no access!!");
 
     next();
   };
