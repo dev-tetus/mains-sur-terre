@@ -14,11 +14,7 @@ const keys = require("./config/Keys/keys");
 const redis = require("redis");
 const session = require("express-session");
 let RedisStore = require("connect-redis")(session);
-let redisClient = redis.createClient({
-  port: keys.REDIS.PORT,
-  host: keys.REDIS.HOST,
-  password: keys.REDIS.PASSWORD,
-});
+
 
 //Routes
 const products = require("./routes/products");

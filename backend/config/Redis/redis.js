@@ -1,4 +1,12 @@
 const keys = require("../Keys/keys");
 const redis = require("redis");
 
-export const redisClient = redis.createClient(keys.REDIS);
+const redisClient = redis.createClient({
+  port: keys.REDIS.PORT,
+  host: keys.REDIS.HOST,
+  password: keys.REDIS.PASSWORD,
+});
+
+module.exports = {
+  redisClient,
+};
