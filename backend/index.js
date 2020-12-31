@@ -16,7 +16,7 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-const port = process.env.PORT || 3001;
+const port = process.env.PORT;
 
 pool.getConnection((err, connection) => {
   if (err) throw err;
