@@ -4,6 +4,10 @@ const bodyParser = require("body-parser");
 const pool = require("../dbconfig");
 const Joi = require("joi");
 const productSchema = require("../Helpers/products_schema");
+const {
+  authenticateToken,
+  validateRole,
+} = require("../middlewares/validationMiddleware");
 
 router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({ extended: false }));
@@ -43,29 +47,36 @@ router.get("/:id", async (req, res) => {
 });
 
 //*Insert one unique product to database
-router.post("/insert", async (req, res) => {
-  try {
-    const validData = await productSchema.insertProduct.validateAsync(req.body);
-    const selectUniqueQuery =
-      "INSERT INTO produits (name, description, price)  VALUES (?,?,?)";
-    pool.getConnection((err, connection) => {
-      if (err) res.send(err).status(500);
-      else {
-        connection.query(
-          selectUniqueQuery,
-          [validData["name"], validData["description"], validData["price"]],
-          (error, result) => {
-            if (error) res.send(error).status(500);
-            res.send(result).status(200);
-            connection.destroy();
-          }
-        );
-      }
-    });
-  } catch (e) {
-    if (e.isJoi === true) res.send(e);
+router.post(
+  "/insert",
+  authenticateToken,
+  validateRole("admin"),
+  async (req, res) => {
+    try {
+      const validData = await productSchema.insertProduct.validateAsync(
+        req.body
+      );
+      const selectUniqueQuery =
+        "INSERT INTO produits (name, description, price)  VALUES (?,?,?)";
+      pool.getConnection((err, connection) => {
+        if (err) res.send(err).status(500);
+        else {
+          connection.query(
+            selectUniqueQuery,
+            [validData["name"], validData["description"], validData["price"]],
+            (error, result) => {
+              if (error) res.send(error).status(500);
+              res.send(result).status(200);
+              connection.destroy();
+            }
+          );
+        }
+      });
+    } catch (e) {
+      if (e.isJoi === true) res.send(e);
+    }
   }
-});
+);
 
 //*Update one product to db with optional params
 //?Use of put instead of patch for the moment
@@ -92,21 +103,26 @@ router.put("/update/:id", async (req, res) => {
 });
 
 //Delete product from database
-router.delete("/delete/:id", async (req, res) => {
-  try {
-    const deleteQuery = "DELETE FROM produits where id = ?";
-    const validId = await productSchema.regexId.validateAsync(req.params.id);
-    pool.getConnection((err, connection) => {
-      if (err) throw err;
-      connection.query(deleteQuery, validId, (error, result) => {
-        res.sendStatus(200);
-        connection.destroy();
-        if (error) res.send(error).status(500);
+router.delete(
+  "/delete/:id",
+  authenticateToken,
+  validateRole("admin"),
+  async (req, res) => {
+    try {
+      const deleteQuery = "DELETE FROM produits where id = ?";
+      const validId = await productSchema.regexId.validateAsync(req.params.id);
+      pool.getConnection((err, connection) => {
+        if (err) throw err;
+        connection.query(deleteQuery, validId, (error, result) => {
+          res.sendStatus(200);
+          connection.destroy();
+          if (error) res.send(error).status(500);
+        });
       });
-    });
-  } catch (e) {
-    if (e.isJoi === true) res.sendStatus(422);
+    } catch (e) {
+      if (e.isJoi === true) res.sendStatus(422);
+    }
   }
-});
+);
 
 module.exports = router;

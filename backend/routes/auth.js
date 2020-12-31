@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const router = express.Router();
 const bodyParser = require("body-parser");
@@ -9,7 +10,12 @@ const Verifier = require("email-verifier");
 
 const keys = require("../config/keys");
 const authSchema = require("../Helpers/auth_schema");
-const { validateUser } = require("../middlewares/validationMiddleware");
+const {
+  validateUser,
+  authenticateToken,
+  validateRole,
+  refreshTokenRequest,
+} = require("../middlewares/validationMiddleware");
 
 const verifier = new Verifier(keys.API_KEY_VERIFIER);
 
@@ -17,7 +23,7 @@ router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({ extended: false }));
 
 //* Get all users
-router.get("/", async (req, res) => {
+router.get("/", authenticateToken, validateRole("admin"), async (req, res) => {
   pool.getConnection((err, connection) => {
     if (err) console.log(err);
     connection.query("SELECT * FROM users", (e, results) => {
@@ -39,7 +45,7 @@ router.post("/register", validateUser, async (req, res) => {
           console.log(results);
           if (Object.keys(results).length === 0) {
             connection.query(
-              "INSERT INTO users(email, username, password) VALUES(?,?,?)",
+              "INSERT INTO users(email, username, password, role) VALUES(?,?,?, 'client')",
               [res.locals.email, res.locals.username, hashedPassword],
               (err, results) => {
                 if (err) throw err;
@@ -65,12 +71,11 @@ router.post("/register", validateUser, async (req, res) => {
 });
 
 //*Login user
-//TODO: Login con mail o username
-router.get("/login", async (req, res) => {
+
+router.post("/login", async (req, res) => {
   try {
     const validData = await authSchema.loginSchema.validateAsync(req.body);
 
-    //*Mirar si existe en bbdd
     pool.getConnection((err, connection) => {
       if (err) throw err;
       connection.query(
@@ -85,11 +90,26 @@ router.get("/login", async (req, res) => {
               (err, same) => {
                 if (err) res.sendStatus(500);
                 if (same) {
-                  res.sendStatus(200);
-                  console.log(`User ${results[0].username} connected!`);
+                  const user = {
+                    username: results[0].username,
+                    email: results[0].email,
+                    role: results[0].role,
+                  };
+
+                  const accessToken = grantAccess(user);
+                  const refreshToken = jwt.sign(
+                    user,
+                    process.env.SECRET_REFRESH_KEY
+                  );
+                  const userInfo = {
+                    accessToken: accessToken,
+                    refreshToken: refreshToken,
+                  };
+                  res.status(200).send(userInfo);
+                  //console.log(`User ${results[0].username} connected!`);
                   connection.destroy();
                 } else {
-                  res.sendStatus(500);
+                  res.sendStatus(403);
                   console.log("Invalid password");
                   connection.destroy();
                 }
@@ -105,5 +125,34 @@ router.get("/login", async (req, res) => {
     if (e.isJoi === true) res.send("Invalid input");
   }
 });
+
+//TODO Check Redis
+//Check only if token is valid and responds user data if correct
+router.get("/token", refreshTokenRequest, (req, res) => {
+  jwt.verify(req.token, process.env.SECRET_REFRESH_KEY, (err, data) => {
+    if (err) return res.sendStatus(403);
+    const accessToken = grantAccess(data);
+    res.send(accessToken);
+  });
+});
+
+//Check token and admin role
+router.get(
+  "/validateRole",
+  authenticateToken,
+  validateRole("admin"),
+  (req, res) => {
+    res.send("Admin Role!");
+  }
+);
+
+//! Methods
+
+//* GenerateJWT
+function grantAccess(user) {
+  return jwt.sign(user, process.env.SECRET_ACCESS_KEY, {
+    expiresIn: "5m",
+  });
+}
 
 module.exports = router;
