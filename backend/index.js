@@ -1,15 +1,25 @@
+//Basic modules
+require("dotenv").config();
 const express = require("express");
 const app = express();
 const cors = require("cors");
 const bodyParser = require("body-parser");
 
-require("dotenv").config();
+//Session modules
+const redis = require("redis");
+const session = require("express-session");
+let RedisStore = require("connect-redis")(session);
+let redisClient = redis.createClient();
 
-const pool = require("./dbconfig");
+//DB module
+const pool = require("./config/Db/DBConfig");
 
+//Routes
 const products = require("./routes/products");
 const auth = require("./routes/auth");
 
+//Middlewares
+app.use();
 app.use("/products", products);
 app.use("/auth", auth);
 app.use(cors());
