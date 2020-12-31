@@ -7,7 +7,8 @@ module.exports = {
   },
   REDIS = {
     PORT : process.env.REDIS_PORT,
-    HOST : process.env.REDIS_HOST,
+    HOST: process.env.REDIS_HOST,
+    PASSWORD: process.env.REDIS_PASSWORD,
   },
   MAIL_VERIFIER = {
     API_KEY = process.env.API_KEY
