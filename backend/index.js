@@ -11,15 +11,28 @@ const session = require("express-session");
 let RedisStore = require("connect-redis")(session);
 let redisClient = redis.createClient();
 
-//DB module
+//Config modules
 const pool = require("./config/Db/DBConfig");
+const redisModule = require("./config/Redis/redis");
 
 //Routes
 const products = require("./routes/products");
 const auth = require("./routes/auth");
 
 //Middlewares
-app.use();
+app.use(
+  session({
+    store: new RedisStore({ client: redisModule.redisClient }),
+    secret: "testSecret",
+    saveUninitialized: false,
+    resave: false,
+    cookie: {
+      secure: process.env.NODE_ENV === "production",
+      httpOnly: true,
+      maxAge: 1000 * 60 * 15,
+    },
+  })
+);
 app.use("/products", products);
 app.use("/auth", auth);
 app.use(cors());
