@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const bodyParser = require("body-parser");
-const pool = require("../dbconfig");
+const pool = require("../config/Db/DBConfig");
 const Joi = require("joi");
 const productSchema = require("../Helpers/products_schema");
 const {
@@ -49,7 +49,7 @@ router.get("/:id", async (req, res) => {
 //*Insert one unique product to database
 router.post(
   "/insert",
-  authenticateToken,
+  // authenticateToken,
   validateRole("admin"),
   async (req, res) => {
     try {
@@ -105,7 +105,7 @@ router.put("/update/:id", async (req, res) => {
 //Delete product from database
 router.delete(
   "/delete/:id",
-  authenticateToken,
+  // authenticateToken,
   validateRole("admin"),
   async (req, res) => {
     try {

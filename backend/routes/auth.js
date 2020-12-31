@@ -2,7 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const router = express.Router();
 const bodyParser = require("body-parser");
-const pool = require("../dbconfig");
+const pool = require("../config/Db/DBConfig");
 const Joi = require("joi");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
@@ -15,6 +15,7 @@ const {
   authenticateToken,
   validateRole,
   refreshTokenRequest,
+  authenticateUser,
 } = require("../middlewares/validationMiddleware");
 
 const verifier = new Verifier(keys.MAIL_VERIFIER.API_KEY);
@@ -23,14 +24,20 @@ router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({ extended: false }));
 
 //* Get all users
-router.get("/", authenticateToken, validateRole("admin"), async (req, res) => {
-  pool.getConnection((err, connection) => {
-    if (err) console.log(err);
-    connection.query("SELECT * FROM users", (e, results) => {
-      res.send(results);
+router.get(
+  "/",
+  // authenticateToken,
+  authenticateUser,
+  validateRole("admin"),
+  async (req, res) => {
+    pool.getConnection((err, connection) => {
+      if (err) console.log(err);
+      connection.query("SELECT * FROM users", (e, results) => {
+        res.send(results);
+      });
     });
-  });
-});
+  }
+);
 
 //*Register user
 router.post("/register", validateUser, async (req, res) => {
@@ -90,25 +97,20 @@ router.post("/login", async (req, res) => {
               (err, same) => {
                 if (err) res.sendStatus(500);
                 if (same) {
-                  const user = {
-                    username: results[0].username,
-                    email: results[0].email,
-                    role: results[0].role,
-                  };
-
-                  const accessToken = grantAccess(user);
-                  const refreshToken = jwt.sign(user, keys.JWT.REFRESH_KEY);
-                  const userInfo = {
-                    accessToken: accessToken,
-                    refreshToken: refreshToken,
-                  };
-                  res.status(200).send(userInfo);
-                  //console.log(`User ${results[0].username} connected!`);
+                  req.session.userId = results[0].id;
+                  req.session.name = results[0].username;
+                  req.session.role = results[0].role;
+                  console.log(`User ${results[0].username} connected!`);
                   connection.destroy();
+                  return res
+                    .status(200)
+                    .send(
+                      `User ${req.session.name} Logged In with role of ${req.session.role}`
+                    );
                 } else {
-                  res.sendStatus(403);
-                  console.log("Invalid password");
                   connection.destroy();
+                  console.log("Invalid password");
+                  return res.sendStatus(403);
                 }
               }
             );
@@ -123,28 +125,7 @@ router.post("/login", async (req, res) => {
   }
 });
 
-//TODO Check Redis
-//Check only if token is valid and responds user data if correct
-router.get("/token", refreshTokenRequest, (req, res) => {
-  jwt.verify(req.token, keys.JWT.ACCESS_KEY, (err, data) => {
-    if (err) return res.sendStatus(403);
-    const accessToken = grantAccess(data);
-    res.send(accessToken);
-  });
-});
-
-//Check token and admin role
-router.get(
-  "/validateRole",
-  authenticateToken,
-  validateRole("admin"),
-  (req, res) => {
-    res.send("Admin Role!");
-  }
-);
-
 //! Methods
-
 //* GenerateJWT
 function grantAccess(user) {
   return jwt.sign(user, process.env.SECRET_ACCESS_KEY, {
