@@ -110,12 +110,12 @@ router.post("/login", async (req, res) => {
                 } else {
                   connection.destroy();
                   console.log("Invalid password");
-                  return res.sendStatus(403);
+                  return res.status(403).send("Datos incorrectos");
                 }
               }
             );
           } else {
-            res.send("User doesnt exist");
+            return res.status(403).send("Datos incorrectos");
           }
         }
       );
