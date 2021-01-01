@@ -1,4 +1,5 @@
 module.exports = {
+  PORT: process.env.PORT,
   DB =  {
     DB_HOST: process.env.HOSTNAME,
     DB_USER: process.env.USERNAME,
@@ -9,6 +10,8 @@ module.exports = {
     PORT : process.env.REDIS_PORT,
     HOST: process.env.REDIS_HOST,
     PASSWORD: process.env.REDIS_PASSWORD,
+    SECRET_KEY: process.env.REDIS_SECRET_KEY,
+    SESSION_NAME: process.env.REDIS_SESSION_NAME,
   },
   MAIL_VERIFIER = {
     API_KEY = process.env.API_KEY
