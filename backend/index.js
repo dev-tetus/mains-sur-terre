@@ -22,6 +22,7 @@ const auth = require("./routes/auth");
 //Middlewares
 app.use(
   session({
+    name: "sessionId",
     store: new RedisStore({ client: redisModule.redisClient }),
     secret: "testSecret",
     saveUninitialized: false,
