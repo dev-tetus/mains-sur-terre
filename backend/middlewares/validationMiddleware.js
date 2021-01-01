@@ -1,7 +1,4 @@
 require("dotenv").config();
-const jwt = require("jsonwebtoken");
-const express = require("express");
-const route = express.Router();
 
 const keys = require("../config/Keys/keys");
 
@@ -29,57 +26,6 @@ const validateUser = async (req, res, next) => {
     if (e.isJoi === true) res.sendStatus(422);
   }
 };
-
-// //* Token to request variable middleware
-// const refreshTokenRequest = (req, res, next) => {
-//   const bearerHeader = req.headers["authorization"];
-
-//   if (typeof bearerHeader !== "undefined") {
-//     req.token = bearerHeader.split(" ")[1];
-//     next();
-//   } else return res.sendStatus(401);
-// };
-// //* Token authentication
-// const authenticateToken = (req, res, next) => {
-//   const bearerHeader = req.headers["authorization"];
-//   if (typeof bearerHeader !== "undefined") {
-//     const token = bearerHeader.split(" ")[1];
-//     jwt.verify(token, process.env.SECRET_ACCESS_KEY, (err, response) => {
-//       if (err) return res.sendStatus(403);
-
-//       const user = {
-//         username: response.username,
-//         email: response.email,
-//         role: response.role,
-//       };
-//       req.data = user;
-
-//       next();
-//     });
-//   } else return res.sendStatus(401);
-// };
-
-//* Authenticate User
-const authenticateUser = (req, res, next) => {
-  if (!req.session || !req.session.userId) {
-    const err = new Error("not authenticated");
-    next(err);
-  }
-  next();
-};
-//* Role Validation
-function validateRole(role) {
-  return (req, res, next) => {
-    if (req.session.role !== role)
-      return res.status(403).send("You have no access!!");
-
-    next();
-  };
-}
 module.exports = {
   validateUser,
-  // authenticateToken,
-  validateRole,
-  // refreshTokenRequest,
-  authenticateUser,
 };
