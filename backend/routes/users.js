@@ -8,8 +8,8 @@ const controller = require("../controllers/usersController");
 const { authenticateUser, validateRole } = require("../middlewares/auth");
 
 router.use(authenticateUser);
-//*Get all users
 
+//*Get all users
 router.get("/", validateRole("admin"), controller.getUsers);
 
 router.get("/user/profile", controller.getUserProfile);

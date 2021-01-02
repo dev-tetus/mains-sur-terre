@@ -3,8 +3,9 @@ const pool = require("../config/Db/DBConfig");
 //* Get all users
 const getUsers = async (req, res) => {
   pool.getConnection((err, connection) => {
-    if (err) console.log(err);
+    if (err) return next(err);
     connection.query("SELECT * FROM users", (e, results) => {
+      if (e) return next(e);
       res.send(results);
     });
   });

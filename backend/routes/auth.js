@@ -10,9 +10,6 @@ const controller = require("../controllers/authController");
 const { validateUser } = require("../middlewares/validationMiddleware");
 const { redirectLogin, isLoggedIn } = require("../middlewares/auth");
 
-router.use(bodyParser.json());
-router.use(bodyParser.urlencoded({ extended: false }));
-
 //*Register user
 router.post("/register", validateUser, controller.register);
 
