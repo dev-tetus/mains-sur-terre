@@ -17,9 +17,9 @@
     "dotenv": "^8.2.0",
     "email-verifier": "^0.4.1",
     "express": "^4.17.1",
+    "express-rate-limit": "^5.2.3",
     "express-session": "^1.17.1",
     "joi": "^17.3.0",
-    "jsonwebtoken": "^8.5.1",
     "mysql": "^2.18.1",
     "redis": "^3.0.2"
   },
