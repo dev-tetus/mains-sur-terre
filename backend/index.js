@@ -9,6 +9,9 @@ const bodyParser = require("body-parser");
 const pool = require("./config/Db/DBConfig");
 const redisModule = require("./config/Redis/redis");
 const keys = require("./config/Keys/keys");
+const limiter = require("./config/Rate-Limit/rate-limit");
+
+app.set("trust proxy", 1);
 
 //*Error Module
 const errorHandler = require("./error/errorHandler");
@@ -31,6 +34,7 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(redisModule._session); //*Session config for cookies
+app.use(limiter);
 app.use("/products", products); //*Product routes
 app.use("/auth", auth); //*Authentication routes
 app.use("/users", users); //*Users routes
