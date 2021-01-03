@@ -8,9 +8,10 @@ const redisClient = redis.createClient({
   host: keys.REDIS.HOST,
   password: keys.REDIS.PASSWORD,
 });
+const store = new RedisStore({ client: redisClient });
 const _session = session({
   name: keys.REDIS.SESSION_NAME,
-  store: new RedisStore({ client: redisClient }),
+  store,
   secret: keys.REDIS.SECRET_KEY,
   saveUninitialized: false,
   resave: false,
@@ -24,4 +25,5 @@ const _session = session({
 module.exports = {
   redisClient,
   _session,
+  store,
 };
