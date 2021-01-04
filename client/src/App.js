@@ -7,6 +7,7 @@ import Boutique from "./Boutique.js";
 import APropos from "./APropos.js";
 import Home from "./Home.js";
 import Register from "./Pages/Register/Register";
+import Login from "./Pages/Login/Login";
 
 function App() {
   return (
@@ -17,7 +18,7 @@ function App() {
           <Route path="/boutique" exact component={Boutique} />
           <Route path="/apropos" component={APropos} />
           <Route path="/register" component={Register} />
-          
+          <Route path="/login" component={Login} />
         </Switch>
       </div>
     </Router>
