@@ -30,7 +30,12 @@ const auth = require("./routes/auth");
 const users = require("./routes/users");
 
 //Middlewares
-app.use(cors());
+app.use(
+  cors({
+    credentials: true,
+    origin: true,
+  })
+);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(redisModule._session); //*Session config for cookies
