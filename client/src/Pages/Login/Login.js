@@ -6,7 +6,7 @@ function Login() {
   const [password, setPassword] = useState("");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
-  //*Senda login data to server
+  //*Send login data to server
   async function sendData() {
     try {
       const response = await axios({
