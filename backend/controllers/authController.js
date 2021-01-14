@@ -40,7 +40,7 @@ const register = async (req, res, next) => {
       );
     });
   } catch (e) {
-    if (e) next(e);
+    if (e) next(ErrorApi.internalError());
   }
 };
 
@@ -85,12 +85,12 @@ const login = async (req, res, next) => {
     });
   } catch (e) {
     if (e.isJoi === true) return next(ErrorApi.badRequest("Invalid input"));
-    else return next(e);
+    else return next((ErrorApi.internalError()));
   }
 };
 
 ///*Logout
-const logout = (req, res) => {
+const logout = (req, res, next) => {
   req.session.destroy((err) => {
     if (err) return next(ErrorApi.internalError());
     return res
@@ -101,8 +101,9 @@ const logout = (req, res) => {
 };
 
 //*Is user loggedIn
-const session = (req, res) => {
-  if (req.session.userId) {
+const session = (req, res, next) => {
+  console.log(req.session.userId);
+  if (req.session && req.session.userId) {
     pool.getConnection((err, connection) => {
       if (err) next(ErrorApi.internalError());
       connection.query(
@@ -111,16 +112,21 @@ const session = (req, res) => {
         (err, results) => {
           if (err) return next(ErrorApi.internalError());
           if (results.length > 0) {
+            connection.destroy();
             const username = results[0].username;
             return res
               .status(200)
               .send(`User ${username} is currently logged in`);
-          } else return next(ErrorApi.notFound("User not found in db"));
+          } else {
+            connection.destroy();
+            return next(ErrorApi.notFound("User not found in db"));
+          }
         }
       );
     });
   } else {
-    return next(ErrorApi.notFound("No current session persisted"));
+    const error = ErrorApi.notFound("No current session persisted");
+    return next(error);
   }
 };
 
