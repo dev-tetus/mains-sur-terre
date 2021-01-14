@@ -1,6 +1,6 @@
 import { combineReducers } from "redux";
-import cartReducer from "./cartReducer";
-import isLogged from "./isLoggedReducer";
+import cartReducer from "./redux/reducers/cartReducer";
+import isLogged from "./redux//reducers/isLoggedReducer";
 
 const reducers = combineReducers({
   auth: isLogged,
