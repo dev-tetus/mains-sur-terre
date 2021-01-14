@@ -18,4 +18,6 @@ router.post("/login", isLoggedIn, controller.login);
 
 router.delete("/logout", redirectLogin, controller.logout);
 
+router.get("/session", controller.session);
+
 module.exports = router;
