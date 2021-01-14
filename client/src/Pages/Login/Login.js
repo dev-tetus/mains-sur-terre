@@ -4,7 +4,9 @@ import axios from "../../config/axios";
 function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false); //*Local state for auth
+
+  //TODO App.js useEffect(fetch(isLoggedIn), []) -> change redux state
 
   //*Send login data to server
   async function sendData() {
@@ -17,16 +19,13 @@ function Login() {
           password: password,
         },
       });
-      console.log(response);
+
       if (response.status === 200) {
-        console.log("here");
-        localStorage.setItem("auth", true);
-        // localStorage.setItem("user", response.dat)
+        console.log(response.data);
         setIsLoggedIn(true);
       }
-      // console.log(response.message);
     } catch (error) {
-      console.log(error.response.data.message);
+      console.log(error);
     }
   }
 
@@ -38,7 +37,6 @@ function Login() {
         method: "DELETE",
       });
       if (response.status === 200) {
-        localStorage.setItem("auth", false);
         setIsLoggedIn(false);
         console.log(response.data);
       }
@@ -48,11 +46,20 @@ function Login() {
   }
 
   //*Check if logged in
-  useEffect(() => {
-    if (localStorage.getItem("auth") === true) {
-      return setIsLoggedIn(true);
+  useEffect(async () => {
+    try {
+      const response = await axios({
+        method: "get",
+        url: "/auth/session",
+      });
+      if (response.status === 200) {
+        setIsLoggedIn(true);
+        return console.log(response.data);
+      }
+    } catch (error) {
+      if (error) return console.log(error);
     }
-  }, []);
+  }, []); //esto comprueba nada mas cargar la pagina si el user esta autenticado
   return (
     <div>
       <label>Username or email: </label>
