@@ -15,6 +15,9 @@ class ErrorApi {
   static notFound(msg) {
     return new ErrorApi(404, msg);
   }
+  static internalError() {
+    return new ErrorApi(500, "Something went wrong");
+  }
 }
 
 module.exports = ErrorApi;
