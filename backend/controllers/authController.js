@@ -67,11 +67,10 @@ const login = async (req, res, next) => {
                   req.session.role = results[0].role;
                   console.log(`User ${results[0].username} connected!`);
                   connection.destroy();
-                  return res
-                    .status(200)
-                    .send(
-                      `User ${req.session.name} Logged In with role of ${req.session.role}`
-                    );
+                  return res.status(200).json({
+                    id: results[0].id,
+                    username: results[0].username,
+                  });
                 } else {
                   connection.destroy();
                   console.log("Invalid password");
@@ -85,7 +84,7 @@ const login = async (req, res, next) => {
     });
   } catch (e) {
     if (e.isJoi === true) return next(ErrorApi.badRequest("Invalid input"));
-    else return next((ErrorApi.internalError()));
+    else return next(ErrorApi.internalError());
   }
 };
 
@@ -102,7 +101,6 @@ const logout = (req, res, next) => {
 
 //*Is user loggedIn
 const session = (req, res, next) => {
-  console.log(req.session.userId);
   if (req.session && req.session.userId) {
     pool.getConnection((err, connection) => {
       if (err) next(ErrorApi.internalError());
@@ -113,10 +111,10 @@ const session = (req, res, next) => {
           if (err) return next(ErrorApi.internalError());
           if (results.length > 0) {
             connection.destroy();
-            const username = results[0].username;
-            return res
-              .status(200)
-              .send(`User ${username} is currently logged in`);
+            return res.status(200).json({
+              id: results[0].id,
+              username: results[0].username,
+            });
           } else {
             connection.destroy();
             return next(ErrorApi.notFound("User not found in db"));
