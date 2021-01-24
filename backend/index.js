@@ -39,9 +39,9 @@ app.use(
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(redisModule._session); //*Session config for cookies
+app.use("/auth", auth); //*Authentication routes
 app.use(limiter);
 app.use("/products", products); //*Product routes
-app.use("/auth", auth); //*Authentication routes
 app.use("/users", users); //*Users routes
 
 //* If route not found
