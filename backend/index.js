@@ -30,6 +30,7 @@ const auth = require("./routes/auth");
 const users = require("./routes/users");
 
 //Middlewares
+app.use(express.static(__dirname + "images/uploads"));
 app.use(
   cors({
     credentials: true,
