@@ -122,3 +122,4 @@ dist
 
 # misc
 assets/
+*.txt
